@@ -108,15 +108,35 @@ def render(density: float = 0.6, steps: int = 60):
         grid = history[i]
         image_rgb = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
         
-        image_rgb[grid == 1] = [34, 139, 34]   # Trees -> Green
-        image_rgb[grid == 2] = [0, 69, 0]    # Fire -> Orange/Red
+        image_rgb[grid == 1] = [34, 10, 34]   # Trees -> Green
+        image_rgb[grid == 2] = [0, 95, 0]    # Fire -> Orange/Red
         image_rgb[grid == 0] = [50, 50, 50]    # Ash -> Dark Gray
 
         frames.append(Image.fromarray(image_rgb, 'RGB'))
 
     # Stitch frames into a GIF
     buf = BytesIO()
-    frames[0].save(
+    frames[0].save(name: Deploy Wildfire
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/exouser/wildfire
+            git pull origin main
+            /home/exouser/.local/bin/uv sync
+            sudo systemctl restart wildfire
         buf, 
         format="GIF",
         save_all=True,
